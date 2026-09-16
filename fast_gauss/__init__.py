@@ -1,8 +1,7 @@
 import torch
-from torch import nn
-from typing import NamedTuple, List, Dict, Sequence
+from typing import NamedTuple, List, Sequence
 
-from .gsplat_utils import GSplatContextManager
+from .renderer import GSplatContextManager
 
 raster_context = None
 
@@ -126,3 +125,6 @@ class BatchedGaussianRasterizer(GaussianRasterizer):
             cov3D_precomp,
             self.raster_settings,
         )
+
+    def render_street(self, raw):
+        return raster_context.rasterize_street_gaussians_batch(raw, self.raster_settings)

@@ -27,24 +27,6 @@ class Colors:
     CROSSED = "\033[9m"
     END = "\033[0m"
 
-essential_packages = [
-    'pdbr', # will also install rich
-    'tqdm',
-    'ujson',
-    'ruamel.yaml',
-]
-
-try:
-    for package in essential_packages:
-        __import__(package)
-except ImportError as e:
-    print(f'{Colors.YELLOW}{Colors.BOLD}Missing package: {Colors.RED}{Colors.BOLD}{e}{Colors.YELLOW}{Colors.BOLD}, trying to hot install using pip...{Colors.END}')
-    import sys
-    import subprocess
-    subprocess.call([sys.executable, '-m', 'ensurepip'])
-    subprocess.call([sys.executable, '-m', 'pip', 'install', *essential_packages])
-
-
 # This file should serve as a drop in replacement for log_utils.py
 import os
 import re
