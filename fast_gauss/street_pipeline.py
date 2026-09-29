@@ -359,6 +359,9 @@ extern "C" __global__ void view_prepare(
     visibility[tid] = 0;
     if (world_opacities[gid] < .004f) return;
     const V3 world_mean = read3(world_means, gid);
+    const float* view_matrix = view_matrices + 16 * camera_id;
+    const float view_z = world_mean.x * view_matrix[2] + world_mean.y * view_matrix[6] + world_mean.z * view_matrix[10] + view_matrix[14];
+    if (view_z <= .2f) return;
     const float* projection = projections + 16 * camera_id;
     const float clip_x = world_mean.x * projection[0] + world_mean.y * projection[4] + world_mean.z * projection[8] + projection[12];
     const float clip_y = world_mean.x * projection[1] + world_mean.y * projection[5] + world_mean.z * projection[9] + projection[13];
@@ -369,8 +372,7 @@ extern "C" __global__ void view_prepare(
     const float ndc_z = clip_z / clip_w;
     if (ndc_z <= -1.01f || ndc_z >= 1.01f || ndc_x <= -1.5f || ndc_x >= 1.5f || ndc_y <= -1.5f || ndc_y >= 1.5f) return;
     visibility[tid] = 1;
-    const float* view_matrix = view_matrices + 16 * camera_id;
-    depths[tid] = world_mean.x * view_matrix[2] + world_mean.y * view_matrix[6] + world_mean.z * view_matrix[10] + view_matrix[11];
+    depths[tid] = view_z;
     const V3 mean = read3(sh_means, gid);
     const V3 center = read3(camera_centers, camera_id);
     const float dx = mean.x - center.x;
